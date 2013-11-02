@@ -52,5 +52,5 @@ end
 # Install dotfiles
 include_recipe "dotfiles"
 
-# TODO: Install nvm, nodeJS versions and npm packages
+# TODO: Install nvm, nodeJS and npm global packages
 # TODO: Install rvm, ruby versions and gems

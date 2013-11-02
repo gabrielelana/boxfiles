@@ -1,7 +1,6 @@
-require_relative ".github.rb"
-
 # TODO: setup current timezone
 # TODO: dotfiles cookbook should export dotfiles as resource
+# TODO: find a better way to copy private/identities files
 
 # DEPENDENCIES:
 # Vagrant (make sure you have installed Xcode command line utilities "Preferences > Dowloads")
@@ -69,33 +68,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     chef.json = {
       "dotfiles" => {
         "user" => "vagrant",
-        "group" => "users"
-      },
-      "github" => {
-        "username" => GITHUB_USERNAME,
-        "password" => GITHUB_PASSWORD
+        "group" => "users",
+        "private" => {
+          ".netrc" => IO.read(File.expand_path("~/.netrc")),
+          ".ssh/config" => IO.read(File.expand_path("~/.ssh/config")),
+          ".ssh/id_rsa.gabrielelana" => IO.read(File.expand_path("~/.ssh/id_rsa.gabrielelana")),
+          ".ssh/id_rsa.gabrielelana.pub" => IO.read(File.expand_path("~/.ssh/id_rsa.gabrielelana.pub")),
+          ".ssh/id_rsa.cleancode" => IO.read(File.expand_path("~/.ssh/id_rsa.cleancode")),
+          ".ssh/id_rsa.cleancode.pub" => IO.read(File.expand_path("~/.ssh/id_rsa.cleancode.pub"))
+        }
       }
     }
-        
+    
     chef.add_recipe "dream"
   end
 end
-
-
-# sudo echo "
-## [infinality-bundle-multilib]
-## Server = http://ibn.net63.net/infinality-bundle-multilib/$arch
-## " >> /etc/pacman.conf
-# sudo pacman-key -r 962DDE58
-# sudo pacman-key --lsign-key 962DDE58
-# sudo pacman -Syyu --noconfirm
-# sudo pacman -S --noconfirm cairo-infinality-ultimate fontconfig-infinality-ultimate freetype2-infinality-ultimate xorg-server xorg-server-utils xorg-xinit
-# sudo pacman -S --noconfirm gnome-terminal
-# sudo pacman -S --noconfirm xterm # don't know if this is mandatory, guess it's because of the default window manager that pretend to start xterm
-# sudo pacman -S --noconfirm ttf-bitstream-vera ttf-freefont ttf-droid ttf-inconsolata ttf-ubuntu-font-family
-# sudo pacman -S --noconfirm i3-wm
-# sudo pacman -S --noconfirm slim slim-themes
-# sudo systemctl enable slim.service
-
-## this is no good but it will do the trick
-## xrandr --output VBOX0 --mode 1680x1050
