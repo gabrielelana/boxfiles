@@ -1,0 +1,10 @@
+{
+  "sources": {
+    "dream": {
+      "path": "./cookbooks/dream"
+    },
+    "dotfiles": {
+      "path": "./cookbooks/dotfiles"
+    }
+  }
+}
