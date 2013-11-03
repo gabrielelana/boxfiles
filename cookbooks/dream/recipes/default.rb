@@ -49,8 +49,24 @@ service "slim.service" do
   action [:enable, :start]
 end
 
+# Install nvm, nodeJS and npm global packages
+bash "install nvm, nodeJS and npm global packages" do
+  node_js_version = "0.10.21"
+  home_directory = "/home/#{node["dotfiles"]["user"]}"
+  user node["dotfiles"]["user"]
+  group node["dotfiles"]["group"]
+  environment "HOME" => home_directory, "USER" => node["dotfiles"]["user"]
+  code <<-EOF
+    git clone https://github.com/creationix/nvm.git #{home_directory}/.nvm
+    source #{home_directory}/.nvm/nvm.sh
+    nvm install #{node_js_version}
+    nvm alias default #{node_js_version}
+    # TODO: install needed global packages
+  EOF
+  not_if "[ -d #{home_directory}/.nvm ] && source #{home_directory}/.nvm/nvm.sh && nvm ls | grep #{node_js_version} > /dev/null"
+end
+
+# TODO: Install rvm, ruby versions and gems
+
 # Install dotfiles
 include_recipe "dotfiles"
-
-# TODO: Install nvm, nodeJS and npm global packages
-# TODO: Install rvm, ruby versions and gems

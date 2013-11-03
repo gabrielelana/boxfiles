@@ -1,6 +1,6 @@
 home_directory = "/home/#{node['dotfiles']['user']}"
 
-# private configuration files
+# Private configuration files
 node["dotfiles"]["private"].each do |file_path, file_content|
   file "#{home_directory}/#{file_path}" do
     owner node["dotfiles"]["user"]
@@ -11,7 +11,7 @@ node["dotfiles"]["private"].each do |file_path, file_content|
   end
 end
 
-# checkout and setup dotfiles
+# Checkout and setup dotfiles
 bash "checkout and setup dotfiles" do
   user node['dotfiles']['user']
   group node['dotfiles']['group']
@@ -23,4 +23,4 @@ bash "checkout and setup dotfiles" do
   not_if "test -d #{home_directory}/.dotfiles"
 end
 
-# TODO: run ~/.dotfiles/bootstrap-or-update.sh if remote dotfiles repository contains new commits
+# TODO: Run ~/.dotfiles/bootstrap-or-update.sh if remote dotfiles repository contains new commits
