@@ -49,6 +49,9 @@ service "slim.service" do
   action [:enable, :start]
 end
 
+# Install dotfiles
+include_recipe "dotfiles"
+
 # Install nvm, nodeJS and npm global packages
 bash "install nvm, nodeJS and npm global packages" do
   node_js_version = "0.10.21"
@@ -67,6 +70,3 @@ bash "install nvm, nodeJS and npm global packages" do
 end
 
 # TODO: Install rvm, ruby versions and gems
-
-# Install dotfiles
-include_recipe "dotfiles"

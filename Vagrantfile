@@ -67,8 +67,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision :chef_solo do |chef|
     chef.json = {
       "dotfiles" => {
-        "user" => "vagrant",
+        "user" => "coder",
         "group" => "users",
+        "password" => "$1$oydT51W0$j6sCuAbZq4zTyXE1dsT5k1",
         "private" => {
           ".netrc" => IO.read(File.expand_path("~/.netrc")),
           ".ssh/config" => IO.read(File.expand_path("~/.ssh/config")),

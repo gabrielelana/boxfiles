@@ -1,11 +1,41 @@
-home_directory = "/home/#{node['dotfiles']['user']}"
+home_directory = "/home/#{node["dotfiles"]["user"]}"
+
+# Install gem needed to hash user passwords aka create a user with a password :-)
+chef_gem "ruby-shadow" do
+  action :install
+end
+
+# Create the dotfile user
+user node["dotfiles"]["user"] do
+  supports :manage_home => true
+  gid node["dotfiles"]["group"]
+  home home_directory
+  shell "/bin/zsh"
+  password node["dotfiles"]["password"]
+end
+
+group "wheel" do
+  action :modify
+  members node["dotfiles"]["user"]
+  append true
+end
 
 # Private configuration files
 node["dotfiles"]["private"].each do |file_path, file_content|
-  file "#{home_directory}/#{file_path}" do
+  file_path = File.join(home_directory, file_path)
+  directory_path = File.dirname(file_path)
+
+  directory directory_path do
     owner node["dotfiles"]["user"]
     group node["dotfiles"]["group"]
-    mode "0600"
+    mode 00700
+    action :create
+  end
+
+  file file_path do
+    owner node["dotfiles"]["user"]
+    group node["dotfiles"]["group"]
+    mode 00600
     content file_content
     action :create
   end
@@ -13,8 +43,8 @@ end
 
 # Checkout and setup dotfiles
 bash "checkout and setup dotfiles" do
-  user node['dotfiles']['user']
-  group node['dotfiles']['group']
+  user node["dotfiles"]["user"]
+  group node["dotfiles"]["group"]
   environment "HOME" => home_directory, "USER" => node["dotfiles"]["user"]
   code <<-EOF.gsub(/^\s+/, "")
     git clone git@github.com:gabrielelana/dotfiles.git #{home_directory}/.dotfiles
