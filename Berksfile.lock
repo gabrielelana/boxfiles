@@ -11,6 +11,9 @@
       "git": "git://github.com/fnichol/chef-rvm.git",
       "ref": "0cd320911c1e568cbf2eeac895a5ef06e5821589"
     },
+    "hostsfile": {
+      "locked_version": "2.4.2"
+    },
     "java": {
       "locked_version": "1.15.4"
     },

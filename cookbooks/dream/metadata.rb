@@ -7,4 +7,5 @@ description "Installs/Configures a dream development environment"
 version "0.0.0"
  
 depends "dotfiles"
+depends "hostsfile"
 depends "rvm"

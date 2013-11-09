@@ -54,6 +54,19 @@ bash "set timezone" do
   code "timedatectl set-timezone Europe/Rome"
 end
 
+# Set hosts
+hostsfile_entry "10.0.2.2" do
+  hostname  "host"
+  aliases   ["starbuck","mac"]
+  action    :create_if_missing
+end
+
+hostsfile_entry "176.9.111.82" do
+  hostname  "cleancode.it"
+  action    :create_if_missing
+end
+
+
 # Install dotfiles
 include_recipe "dotfiles"
 
