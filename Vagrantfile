@@ -48,7 +48,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 		vb.name = "dream"
 		
 		# Boot with GUI or not
-    vb.gui = false
+    vb.gui = true
 		
     # Use VBoxManage to customize the VM
     vb.customize ["modifyvm", :id, "--memory", "2048"]
