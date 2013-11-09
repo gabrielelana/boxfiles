@@ -36,7 +36,7 @@ end
   xorg-server xorg-server-utils xorg-xinit xterm
   ttf-bitstream-vera ttf-freefont ttf-droid ttf-inconsolata ttf-ubuntu-font-family
   gnome-terminal i3-wm slim slim-themes autocutsel xorg-xsetroot
-  gvim zsh ack 
+  chromium gconf gconf-editor gvim zsh ack 
 }.each do |name|
   package name do
     action :install
