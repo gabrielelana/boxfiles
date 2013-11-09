@@ -21,23 +21,29 @@ group "wheel" do
 end
 
 # Private configuration files
-node["dotfiles"]["private"].each do |file_path, file_content|
-  file_path = File.join(home_directory, file_path)
-  directory_path = File.dirname(file_path)
+begin
+  directory_resources_so_far = []
+  node["dotfiles"]["private"].each do |file_path, file_content|
+    file_path = File.join(home_directory, file_path)
+    directory_path = File.dirname(file_path)
 
-  directory directory_path do
-    owner node["dotfiles"]["user"]
-    group node["dotfiles"]["group"]
-    mode 00700
-    action :create
-  end
+    unless directory_resources_so_far.include? directory_path
+      directory_resources_so_far << directory_path
+      directory directory_path do
+        owner node["dotfiles"]["user"]
+        group node["dotfiles"]["group"]
+        mode 00700
+        action :create
+      end
+    end
 
-  file file_path do
-    owner node["dotfiles"]["user"]
-    group node["dotfiles"]["group"]
-    mode 00600
-    content file_content
-    action :create
+    file file_path do
+      owner node["dotfiles"]["user"]
+      group node["dotfiles"]["group"]
+      mode 00600
+      content file_content
+      action :create
+    end
   end
 end
 

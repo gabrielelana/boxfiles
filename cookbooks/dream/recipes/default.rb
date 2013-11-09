@@ -58,6 +58,7 @@ end
 include_recipe "dotfiles"
 
 # TODO: maybe the next things should be put in the dotfiles cookbook?
+# TODO: having an nvm cookbook would be nice...
 
 # Install nvm, nodeJS and npm global packages
 bash "install nvm, nodeJS and npm global packages" do
