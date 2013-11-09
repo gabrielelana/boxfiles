@@ -23,6 +23,7 @@ end
 end
 # END
 
+
 # Packages to remove
 %w{vim}.each do |name|
   package name do
@@ -31,17 +32,19 @@ end
   end
 end
 
+
 # Packages to install
 %w{
   xorg-server xorg-server-utils xorg-xinit xterm
   ttf-bitstream-vera ttf-freefont ttf-droid ttf-inconsolata ttf-ubuntu-font-family
   gnome-terminal i3-wm slim slim-themes autocutsel xorg-xsetroot
-  chromium gconf gconf-editor gvim zsh ack 
+  chromium gconf gconf-editor gvim zsh ack mongodb
 }.each do |name|
   package name do
     action :install
   end
 end
+
 
 # Services to start
 service "slim.service" do
@@ -49,10 +52,17 @@ service "slim.service" do
   action [:enable, :start]
 end
 
+service "mongodb" do
+  provider Chef::Provider::Service::Systemd
+  action [:enable, :start]
+end
+
+
 # Set timezone
 bash "set timezone" do
   code "timedatectl set-timezone Europe/Rome"
 end
+
 
 # Set hosts
 hostsfile_entry "10.0.2.2" do
