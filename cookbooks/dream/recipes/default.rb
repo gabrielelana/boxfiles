@@ -49,6 +49,11 @@ service "slim.service" do
   action [:enable, :start]
 end
 
+# Set timezone
+bash "set timezone" do
+  code "timedatectl set-timezone Europe/Rome"
+end
+
 # Install dotfiles
 include_recipe "dotfiles"
 
