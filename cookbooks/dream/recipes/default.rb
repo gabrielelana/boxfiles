@@ -52,6 +52,8 @@ end
 # Install dotfiles
 include_recipe "dotfiles"
 
+# TODO: maybe the next things should be put in the dotfiles cookbook?
+
 # Install nvm, nodeJS and npm global packages
 bash "install nvm, nodeJS and npm global packages" do
   node_js_version = "0.10.21"
@@ -69,4 +71,22 @@ bash "install nvm, nodeJS and npm global packages" do
   not_if "[ -d #{home_directory}/.nvm ] && source #{home_directory}/.nvm/nvm.sh && nvm ls | grep #{node_js_version} > /dev/null"
 end
 
-# TODO: Install rvm, ruby versions and gems
+# Install rvm, ruby versions and gems
+node.set["rvm"]["install_pkgs"] = []
+node.set["rvm"]["user_installs"] = [
+  { "user" => node["dotfiles"]["user"],
+    "home" => "/home/#{node["dotfiles"]["user"]}",
+    "default_ruby" => "ruby-2.0.0",
+    "rubies" => ["ruby-2.0.0", "ruby-1.9.3"],
+    "rvmrc" => {
+      "rvm_project_rvmrc" => 1,
+      "rvm_gemset_create_on_use_flag" => 1,
+      "rvm_pretty_print_flag" => 1
+    },
+    "global_gems" => [
+      {"name" => "bundler"},
+      {"name" => "rake"}
+    ]
+  }
+]
+include_recipe "rvm::user"
