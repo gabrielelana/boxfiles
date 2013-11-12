@@ -38,7 +38,8 @@ end
   xorg-server xorg-server-utils xorg-xinit xterm
   ttf-bitstream-vera ttf-freefont ttf-droid ttf-inconsolata ttf-ubuntu-font-family
   gnome-terminal i3-wm slim slim-themes autocutsel xorg-xsetroot
-  chromium gconf gconf-editor gvim zsh ack mongodb fontforge
+  chromium firefox gconf gconf-editor gnome-themes-standard
+  gvim zsh ack mongodb fontforge
 }.each do |name|
   package name do
     action :install
