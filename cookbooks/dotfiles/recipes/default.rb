@@ -1,6 +1,6 @@
 home_directory = "/home/#{node["dotfiles"]["user"]}"
 
-# Install gem needed to hash user passwords aka create a user with a password :-)
+# Install gem needed to hash user passwords aka create an user with a password :-)
 chef_gem "ruby-shadow" do
   action :install
 end
