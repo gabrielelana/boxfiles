@@ -37,9 +37,8 @@ end
 %w{
   xorg-server xorg-server-utils xorg-xinit xterm
   ttf-bitstream-vera ttf-freefont ttf-droid ttf-inconsolata ttf-ubuntu-font-family
-  gnome-terminal i3-wm slim slim-themes autocutsel xorg-xsetroot
-  chromium firefox gconf gconf-editor gnome-themes-standard
-  gvim zsh ack mongodb fontforge
+  gnome-terminal i3-wm slim slim-themes autocutsel xorg-xsetroot dunst dmenu unzip
+  chromium firefox gnome-themes-standard gvim zsh ack mongodb fontforge
 }.each do |name|
   package name do
     action :install
@@ -86,7 +85,7 @@ include_recipe "dotfiles"
 
 # Install nvm, nodeJS and npm global packages
 bash "install nvm, nodeJS and npm global packages" do
-  node_js_version = "0.10.21"
+  node_js_version = "0.10.24"
   home_directory = "/home/#{node["dotfiles"]["user"]}"
   user node["dotfiles"]["user"]
   group node["dotfiles"]["group"]
@@ -96,7 +95,7 @@ bash "install nvm, nodeJS and npm global packages" do
     source #{home_directory}/.nvm/nvm.sh
     nvm install #{node_js_version}
     nvm alias default #{node_js_version}
-    # TODO: install needed global packages
+    npm install --global bower grunt-cli yeoman mocha gh underscore-cli
   EOF
   not_if "[ -d #{home_directory}/.nvm ] && source #{home_directory}/.nvm/nvm.sh && nvm ls | grep #{node_js_version} > /dev/null"
 end
@@ -106,8 +105,8 @@ node.set["rvm"]["install_pkgs"] = []
 node.set["rvm"]["user_installs"] = [
   { "user" => node["dotfiles"]["user"],
     "home" => "/home/#{node["dotfiles"]["user"]}",
-    "default_ruby" => "ruby-2.0.0",
-    "rubies" => ["ruby-2.0.0", "ruby-1.9.3"],
+    "default_ruby" => "ruby-2.1.0",
+    "rubies" => ["ruby-2.1.0", "ruby-2.0.0", "ruby-1.9.3"],
     "rvmrc" => {
       "rvm_project_rvmrc" => 1,
       "rvm_gemset_create_on_use_flag" => 1,
