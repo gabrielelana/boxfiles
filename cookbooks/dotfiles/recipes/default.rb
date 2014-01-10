@@ -54,7 +54,7 @@ bash "checkout and setup dotfiles" do
   environment "HOME" => home_directory, "USER" => node["dotfiles"]["user"]
   code <<-EOF.gsub(/^\s+/, "")
     git clone git@github.com:gabrielelana/dotfiles.git #{home_directory}/.dotfiles
-    cd #{home_directory}/.dotfiles && zsh ./bootstrap-or-update.sh
+    cd #{home_directory}/.dotfiles && zsh ./install-or-update.sh
   EOF
   not_if "test -d #{home_directory}/.dotfiles"
 end
