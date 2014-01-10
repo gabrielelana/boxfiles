@@ -39,12 +39,18 @@ end
   ttf-bitstream-vera ttf-freefont ttf-droid ttf-inconsolata ttf-ubuntu-font-family
   gnome-terminal i3-wm slim slim-themes autocutsel xorg-xsetroot dunst dmenu unzip
   chromium firefox gnome-themes-standard gvim zsh ack mongodb fontforge
+  erlang erlang-doc rebar
 }.each do |name|
   package name do
     action :install
   end
 end
 
+# Packages to install from AUR
+include_recipe 'pacman'
+%w{jq}.each do |name|
+  pacman_aur name do action [:build, :install] end
+end
 
 # Services to start
 service "slim.service" do
