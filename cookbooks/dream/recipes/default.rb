@@ -37,7 +37,7 @@ end
 %w{
   xorg-server xorg-server-utils xorg-xinit xterm
   ttf-bitstream-vera ttf-freefont ttf-droid ttf-inconsolata ttf-ubuntu-font-family
-  gnome-terminal i3-wm slim slim-themes autocutsel xorg-xsetroot dunst dmenu unzip
+  gnome-terminal i3-wm slim slim-themes autocutsel xorg-xsetroot dunst unzip
   chromium firefox gnome-themes-standard gvim zsh ack mongodb fontforge
   erlang erlang-doc rebar
 }.each do |name|
@@ -48,7 +48,7 @@ end
 
 # Packages to install from AUR
 include_recipe 'pacman'
-%w{jq}.each do |name|
+%w{jq dmenu-xft-height}.each do |name|
   pacman_aur name do action [:build, :install] end
 end
 
