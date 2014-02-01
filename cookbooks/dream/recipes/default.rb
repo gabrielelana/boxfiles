@@ -120,7 +120,8 @@ node.set["rvm"]["user_installs"] = [
     },
     "global_gems" => [
       {"name" => "bundler"},
-      {"name" => "rake"}
+      {"name" => "rake"},
+      {"name" => "htty"}
     ]
   }
 ]
