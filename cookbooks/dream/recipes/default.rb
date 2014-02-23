@@ -119,6 +119,7 @@ node.set["rvm"]["user_installs"] = [
       "rvm_pretty_print_flag" => 1
     },
     "global_gems" => [
+      {"name" => "travis-lint"},
       {"name" => "bundler"},
       {"name" => "rake"},
       {"name" => "htty"}
