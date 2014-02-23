@@ -91,7 +91,7 @@ include_recipe "dotfiles"
 
 # Install nvm, nodeJS and npm global packages
 bash "install nvm, nodeJS and npm global packages" do
-  node_js_version = "0.10.24"
+  node_js_version = "0.10.26"
   home_directory = "/home/#{node["dotfiles"]["user"]}"
   user node["dotfiles"]["user"]
   group node["dotfiles"]["group"]
