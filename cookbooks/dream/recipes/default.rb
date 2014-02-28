@@ -39,7 +39,7 @@ end
   ttf-bitstream-vera ttf-freefont ttf-droid ttf-inconsolata ttf-ubuntu-font-family
   gnome-terminal i3-wm slim slim-themes autocutsel xorg-xsetroot dunst unzip
   chromium firefox gnome-themes-standard gvim zsh ack mongodb fontforge
-  erlang erlang-doc rebar
+  erlang erlang-doc rebar ctags
 }.each do |name|
   package name do
     action :install
