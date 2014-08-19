@@ -45,6 +45,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION = "2") do |config|
     vb.customize ["modifyvm", :id, "--vram", vb.gui ? "256" : "12"]
     vb.customize ["modifyvm", :id, "--acpi", "on"]
     vb.customize ["modifyvm", :id, "--ioapic", "on"]
+    vb.customize ['guestproperty', 'set', :id,
+                  '/VirtualBox/GuestAdd/VBoxService/--timesync-interval', '500'
+    ]
+    vb.customize ['guestproperty', 'set', :id,
+                  '/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold', '800'
+    ]
   end
 
   # Ensure chef-solo is installed in the current vm
