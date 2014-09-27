@@ -1,20 +1,26 @@
-# TODO: dotfiles cookbook should export dotfiles as resource
-# TODO: find a better way to copy private/identities files
+# DEPENDENCIES
+# * VirtualBox
+# * Chef Development Kit
+# * Vagrant
+# * Vagrant Plugins
+#   * vagrant plugin install vagrant-berkshelf
+#   * vagrant plugin install vagrant-omnibus
 
-# DEPENDENCIES:
-# Vagrant (make sure you have installed Xcode command line utilities "Preferences > Dowloads")
-#   with vagrant-berkshelf plugin (vagrant plugin install vagrant-berkshelf)
-# VirtualBox
+# TODO: https://github.com/dotless-de/vagrant-vbguest???
+# TODO: remove `default: stdin: is not a tty` warning
 
 Vagrant.configure(VAGRANTFILE_API_VERSION = "2") do |config|
   # Name of the registered base box to use
-  config.vm.box = "archlinux-20140104"
+  config.vm.box = "ubuntu-14.10"
 
   # Url where to find the base box in case is not registered on this host
-  config.vm.box_url = "https://dl.dropboxusercontent.com/u/7048158/archlinux-20140104.box"
+  config.vm.box_url = "https://dl.dropboxusercontent.com/u/7048158/ubuntu-14.10.box"
 
   # Enable Berkshelf plugin
   config.berkshelf.enabled = true
+  
+  # Ensure chef is installed in the current vm
+  config.omnibus.chef_version = :latest  
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -32,12 +38,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION = "2") do |config|
 
   config.vm.provider :virtualbox do |vb|
     # Machine name
-    vb.name = "dream"
+    vb.name = "dream-ubuntu"
 
     # Boot with GUI or not
     vb.gui = true
 
-    # Use VBoxManage to customize the VM
+    # VM customization
     vb.customize ["modifyvm", :id, "--memory", "2048"]
     vb.customize ["modifyvm", :id, "--cpus", "4"]
     vb.customize ["modifyvm", :id, "--accelerate3d", vb.gui ? "on" : "off"]
@@ -45,19 +51,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION = "2") do |config|
     vb.customize ["modifyvm", :id, "--vram", vb.gui ? "256" : "12"]
     vb.customize ["modifyvm", :id, "--acpi", "on"]
     vb.customize ["modifyvm", :id, "--ioapic", "on"]
-    vb.customize ['guestproperty', 'set', :id,
-                  '/VirtualBox/GuestAdd/VBoxService/--timesync-interval', '500'
-    ]
-    vb.customize ['guestproperty', 'set', :id,
-                  '/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold', '800'
-    ]
+    vb.customize ['guestproperty', 'set', :id, '/VirtualBox/GuestAdd/VBoxService/--timesync-interval', '500']
+    vb.customize ['guestproperty', 'set', :id, '/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold', '800']
   end
 
-  # Ensure chef-solo is installed in the current vm
-  config.vm.provision :shell,
-    :inline => "which chef-solo || gem install chef --no-user-install --no-rdoc --no-ri"
-
   config.vm.provision :chef_solo do |chef|
+    chef.custom_config_path = "Vagrantfile.chef"
     chef.json = {
       "dotfiles" => {
         "user" => "coder",
@@ -74,5 +73,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION = "2") do |config|
       }
     }
     chef.add_recipe "dream"
+    chef.add_recipe "dotfiles"
   end
 end

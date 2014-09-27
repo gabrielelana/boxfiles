@@ -14,7 +14,7 @@ user node["dotfiles"]["user"] do
   password node["dotfiles"]["password"]
 end
 
-group "wheel" do
+group "sudo" do
   action :modify
   members node["dotfiles"]["user"]
   append true
@@ -53,10 +53,9 @@ bash "checkout and setup dotfiles" do
   group node["dotfiles"]["group"]
   environment "HOME" => home_directory, "USER" => node["dotfiles"]["user"]
   code <<-EOF.gsub(/^\s+/, "")
-    git clone git@github.com:gabrielelana/dotfiles.git #{home_directory}/.dotfiles
-    cd #{home_directory}/.dotfiles && zsh ./install-or-update.sh
+    if [ ! -d #{home_directory}/.dotfiles ]; then
+      git clone git@github.com:gabrielelana/dotfiles.git #{home_directory}/.dotfiles
+    fi
+    cd #{home_directory}/.dotfiles && ./install-or-update.sh
   EOF
-  not_if "test -d #{home_directory}/.dotfiles"
 end
-
-# TODO: Run ~/.dotfiles/bootstrap-or-update.sh if remote dotfiles repository contains new commits
