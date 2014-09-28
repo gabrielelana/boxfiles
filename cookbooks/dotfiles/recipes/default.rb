@@ -59,3 +59,41 @@ bash "checkout and setup dotfiles" do
     cd #{home_directory}/.dotfiles && ./install-or-update.sh
   EOF
 end
+
+# For some reason xmodmap behaves differently in ubuntu
+# .dotfiles are not sensible to linux distribution so
+# here I override 
+file "#{home_directory}/.xmodmap" do
+  owner node["dotfiles"]["user"]
+  group node["dotfiles"]["group"]
+  mode 00600
+  content <<-EOF
+    keycode 37  = Control_L
+    keycode 133 = Control_L
+    keycode 134 = Control_R
+
+    keycode 87 = Hyper_L
+    keycode 88 = Hyper_R
+
+    keycode 89 = Super_L
+    keycode 83 = Super_R
+
+    keycode 84 = nobreakspace
+    keycode 85 = nobreakspace
+
+    ! keycode 108 = Alt_R
+    keycode 104 = Insert
+
+    clear Control
+    clear Mod1
+    clear Mod2
+    clear Mod3
+    clear Mod4
+    clear Mod5
+
+    add Control = Control_L Control_R
+    add Mod1 = Alt_L Alt_R
+    add Mod2 = Hyper_L Hyper_R
+    add Mod3 = Super_L Super_R
+  EOF
+end
