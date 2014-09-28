@@ -7,6 +7,14 @@ execute "apt-get-update" do
   end
 end
 
+apt_repository "google-chrome" do
+    uri "http://dl.google.com/linux/chrome/deb/"
+    distribution "stable"
+    components ["main"]
+    key "https://dl-ssl.google.com/linux/linux_signing_key.pub"
+    action :add
+end
+
 # Install standard packages
 # %w{
 #   xorg-server xorg-server-utils xorg-xinit xterm
@@ -17,6 +25,7 @@ end
 # }.each do |name|
 %w{
   i3 autocutsel unclutter dunst unzip ack-grep zsh fontforge vim-gnome exuberant-ctags mongodb
+  google-chrome-stable
 }.each do |name|
   package name do
     action :install
@@ -28,7 +37,6 @@ end
 # TODO: install go
 # TODO: install erlang and elixir
 # TODO: install mongodb from ppa?
-# TODO: install chrome
 # TODO: install nodejs
 # TODO: install ruby
 

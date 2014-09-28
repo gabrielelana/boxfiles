@@ -6,7 +6,9 @@ DEPENDENCIES
   hostsfile
 
 GRAPH
+  apt (2.6.0)
   dotfiles (0.0.1)
   dream (0.0.1)
+    apt (>= 0.0.0)
     hostsfile (>= 0.0.0)
   hostsfile (2.4.5)

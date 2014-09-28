@@ -6,5 +6,6 @@ description "Installs/Configures a dream development environment"
 # long_description File.read(File.dirname(__FILE__), 'README.md')
 version "0.0.1"
  
+depends "apt"
 depends "hostsfile"
 # depends "rvm"
