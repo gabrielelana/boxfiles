@@ -101,7 +101,7 @@ bash "install nvm, nodeJS and npm global packages" do
     source #{home_directory}/.nvm/nvm.sh
     nvm install #{node_js_version}
     nvm alias default #{node_js_version}
-    npm install --global bower grunt-cli yeoman mocha gh underscore-cli karma phantomjs
+    npm install --global bower grunt-cli yeoman mocha gh underscore-cli karma phantomjs jsfmt
   EOF
   not_if "[ -d #{home_directory}/.nvm ] && source #{home_directory}/.nvm/nvm.sh && nvm ls | grep #{node_js_version} > /dev/null"
 end
