@@ -27,6 +27,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION = "2") do |config|
   # using a specific IP.
   # config.vm.network :private_network, ip: "10.0.2.42"
 
+  config.vm.hostname = "apollo"
+
   # Share host Desktop with Dream machine
   config.vm.synced_folder "~/Desktop", "/mnt/host"
 
