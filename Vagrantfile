@@ -38,7 +38,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION = "2") do |config|
     vb.gui = true
 
     # Use VBoxManage to customize the VM
-    vb.customize ["modifyvm", :id, "--memory", "2048"]
+    vb.customize ["modifyvm", :id, "--memory", "4096"]
     vb.customize ["modifyvm", :id, "--cpus", "4"]
     vb.customize ["modifyvm", :id, "--accelerate3d", vb.gui ? "on" : "off"]
     vb.customize ["modifyvm", :id, "--clipboard", vb.gui ? "bidirectional" : "disabled"]
