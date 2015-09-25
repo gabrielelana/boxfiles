@@ -76,7 +76,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # apt-get -y upgrade && apt-get -y autoremove
     
     echo "Install basic packages..."
-    sudo apt-get install -y build-essential git zsh ack-grep vim-gtk emacs unzip fop xsltproc
+    sudo apt-get install -y build-essential git zsh ack-grep vim-gtk emacs inotify-tools unzip fop xsltproc
     sudo apt-get install -y xorg unclutter dunst i3 suckless-tools x11-utils virtualbox-guest-*
     sudo apt-get install -y gnome-terminal dconf-cli slim chromium-browser firefox gnome-themes-extras
     sudo apt-get install -y postgresql libpq-dev
