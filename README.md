@@ -1,9 +1,2 @@
 # What
-Creates my development environment using Vagrant and Chef
-
-## Dependencies
-* VirtualBox
-* Chef Development Kit (CDK)
-* Vagrant
-* Vagrant Plugins
-  * `vagrant plugin install vagrant-berkshelf`
+Creates my development environment using Vagrant with VirtualBox as VM provider and and basic shell for provisioning
