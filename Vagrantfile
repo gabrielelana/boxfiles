@@ -10,7 +10,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "ubuntu/yakkety64"
+  config.vm.box = "ubuntu/ubuntu-17.04"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -20,7 +20,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
-  config.vm.network "forwarded_port", guest: 80, host: 8080
+  # config.vm.network "forwarded_port", guest: 80, host: 8080
   # config.vm.network "forwarded_port", guest: 8080, host: 8081
   # config.vm.network "forwarded_port", guest: 3000, host: 8083
   # config.vm.network "forwarded_port", guest: 4000, host: 8084
@@ -51,7 +51,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Example for VirtualBox:
   config.vm.provider :virtualbox do |vb|
     # Machine name
-    vb.name = "dream"
+    vb.name = "dream-002"
 
     # Boot with GUI or not
     vb.gui = true
@@ -77,17 +77,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     sudo apt-get update
     
     echo "Install basic packages..."
-    sudo apt-get install -y build-essential git zsh ack-grep silversearcher-ag vim-gtk unzip
-    sudo apt-get install -y xorg unclutter autocutsel dunst i3 suckless-tools x11-utils
-    sudo apt-get install -y gnome-terminal libglib2.0-bin slim firefox gnome-themes-*
-    sudo apt-get install -y virtualbox-guest-x11 dkms virtualbox-guest-dkms
-    
-    echo "Install Emacs"
-    if ! grep -q "ubuntu-elisp" /etc/apt/sources.list; then
-      sudo add-apt-repository -y ppa:ubuntu-elisp
-      sudo apt-get update
-      sudo apt-get install -y --allow-unauthenticated emacs-snapshot
-    fi
+    sudo apt-get install -y \
+      build-essential git zsh ack-grep silversearcher-ag emacs25 \
+      vim-gtk unzip xorg unclutter autocutsel dunst i3 suckless-tools \
+      x11-utils gnome-terminal libglib2.0-bin slim firefox gnome-themes-* \
+      libreadline-dev dbus-x11 jq
     
     echo "Install Chrome"
     if [ ! -f /etc/apt/sources.list.d/google.list ]; then
@@ -108,8 +102,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       sudo mkdir -p /home/coder/{etc,code,opt,tmp}
       sudo mkdir -p /home/coder/.ssh
       if [ ! -f /vagrant/id_rsa.gabrielelana ]; then
-        # cp ~/.ssh/id_rsa.gabrielelana .
-        # cp ~/.ssh/id_rsa.gabrielelana.pub .
         echo "Missing ssh key files" 1>&2
         exit 1
       fi
@@ -129,112 +121,41 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       sudo chown -R coder:users /home/coder
     fi
     
+    sudo -iu coder
     echo "Install dotfiles..."
-    sudo -iu coder #{HEREDOC}EOC
-      [ ! -d .dotfiles ] && git clone git@github.com:gabrielelana/dotfiles.git .dotfiles
-      cd .dotfiles
-      zsh install-or-update.sh
-      sudo zsh configure-slim-theme.sh
-    EOC
+    [ ! -d .dotfiles ] && git clone git@github.com:gabrielelana/dotfiles.git .dotfiles
+    cd .dotfiles
+    zsh install-or-update.sh
+    sudo zsh configure-slim-theme.sh
     
-    echo "Install and Configure MongoDB"
-    if [ ! -f /etc/apt/sources.list.d/mongodb-org-3.0.list ]; then
-      sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
-      echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" > /etc/apt/sources.list.d/mongodb-org-3.2.list
-
-      cat #{HEREDOC}EOF > /etc/init.d/disable-transparent-hugepages
-         #!/bin/sh
-         ### BEGIN INIT INFO
-         # Provides:          disable-transparent-hugepages
-         # Required-Start:    $local_fs
-         # Required-Stop:
-         # X-Start-Before:    mongod mongodb-mms-automation-agent
-         # Default-Start:     2 3 4 5
-         # Default-Stop:      0 1 6
-         # Short-Description: Disable Linux transparent huge pages
-         # Description:       Disable Linux transparent huge pages, to improve
-         #                    database performance.
-         ### END INIT INFO
+    echo "Install asdf and related plugins..."
+    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.3.0
       
-         case \\$1 in
-           start)
-             if [ -d /sys/kernel/mm/transparent_hugepage ]; then
-               thp_path=/sys/kernel/mm/transparent_hugepage
-             elif [ -d /sys/kernel/mm/redhat_transparent_hugepage ]; then
-               thp_path=/sys/kernel/mm/redhat_transparent_hugepage
-             else
-               return 0
-             fi
-      
-             echo 'never' > \\${thp_path}/enabled
-             echo 'never' > \\${thp_path}/defrag
-      
-             unset thp_path
-           ;;
-         esac
-      EOF
-
-      sudo apt-get update
-      sudo apt-get install -y --allow-unauthenticated mongodb-org
-      sudo update-rc.d disable-transparent-hugepages defaults
-      sudo systemctl enable mongod.service
-      sudo -iu coder #{HEREDOC}EOC
-        if [ ! -f ~/.mongorc ]; then
-          curl -sL https://raw.github.com/gabrielelana/mongodb-shell-extensions/master/released/mongorc.js > ~/.mongorc.js
-        fi
-      EOC
-    fi
+    $HOME/.asdf/bin/asdf plugin-add mongodb https://github.com/sylph01/asdf-mongodb.git
+    $HOME/.asdf/bin/asdf plugin-add postgres https://github.com/smashedtoatoms/asdf-postgres.git
+    $HOME/.asdf/bin/asdf plugin-add erlang https://github.com/asdf-vm/asdf-erlang.git
+    $HOME/.asdf/bin/asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git
+    $HOME/.asdf/bin/asdf plugin-add haskell https://github.com/vic/asdf-haskell.git
+    $HOME/.asdf/bin/asdf plugin-add ocaml https://github.com/vic/asdf-ocaml.git
+    $HOME/.asdf/bin/asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby.git
+    $HOME/.asdf/bin/asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+    $HOME/.asdf/bin/asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
+    bash $HOME/.asdf/plugins/nodejs/bin/import-release-team-keyring
     
-    echo "Install Erlang..."
-    if [ ! -f /etc/apt/sources.list.d/erlang-solutions.list ]; then
-      sudo curl -sL https://packages.erlang-solutions.com/erlang/esl-erlang/FLAVOUR_1_general/esl-erlang_19.1.3-1~ubuntu~yakkety_amd64.deb -o /tmp/esl-erlang_19.1.3-1.deb
-      sudo dpkg -i /tmp/esl-erlang_19.1.3-1.deb
-      sudo apt-get install -fy
-      sudo rm -f /tmp/esl-erlang_19.1.3-1.deb
-    fi
+    echo "Install things with asdf..."
+    asdf install mongodb 3.5.1 && asdf global mongodb 3.5.1
+    asdf install erlang 19.3 && asdf global erlang 19.3
+    asdf install elixir 1.4.5-otp-19 && asdf global elixir 1.4.5-otp-19
+    asdf install nodejs 6.11.1 && asdf global nodejs 6.11.1
+    asdf install postgres 9.6.3 && asdf global postgres 9.6.3
     
-    echo "Install Elixir"
-    sudo -iu coder #{HEREDOC}EOC
-      source ~/.zshrc
-      if [ ! -d ~/.kiex ]; then
-        curl -sSL https://raw.githubusercontent.com/taylor/kiex/master/install | bash -s
-        source ~/.kiex/scripts/kiex
-      fi
-      kiex install 1.3.4
-      kiex use 1.3.4 --default
-    EOC
+    echo "Install rust..."
+    curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y
     
-    echo "Install NodeJS"
-    sudo -iu coder #{HEREDOC}EOC
-      source ~/.zshrc
-      if [ ! -d ~/.nvm ]; then
-        echo "Installing NVM..."
-        curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh | bash
-        source ~/.nvm/nvm.sh
-      fi
-      echo "Installing NodeJS stable..."
-      nvm install stable
-      nvm alias default stable
-    EOC
-    
-    echo "Install Ruby"
-    sudo -iu coder #{HEREDOC}EOC
-      if ! `command -v ruby-install`; then
-        wget -O ruby-install-0.6.0.tar.gz https://github.com/postmodern/ruby-install/archive/v0.6.0.tar.gz
-        tar -xzvf ruby-install-0.6.0.tar.gz
-        cd ruby-install-0.6.0/ && sudo make install && cd ..
-        rm -rf ruby-install-*
-      fi
-      if ! `command -v chruby`; then
-        wget -O chruby-0.3.9.tar.gz https://github.com/postmodern/chruby/archive/v0.3.9.tar.gz
-        tar -xzvf chruby-0.3.9.tar.gz
-        cd chruby-0.3.9/ && sudo make install && cd ..
-        rm -rf chruby-*
-      fi
-      /usr/local/bin/ruby-install --latest ruby
-      ls ~/.rubies | tail -1 > ~/.ruby-version
-    EOC
-    
+    # TODO: install Heroku command line + credentials
+    # TODO: install Travis command line + credentials
+    # TODO: install AWS command line + credentials
+        
     echo "Start Slim..."
     if sudo service slim status | grep inactive; then
       sudo service slim start
@@ -243,6 +164,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 end
 
 # After the first provisioning
-# * Enable "Display > Use Unscaled HiDPI Output" in VirtualBox machine's preferences
 
-    
+# 1 - Enable HiDPI Display in VirtualBox
+# "Display > Use Unscaled HiDPI Output" in VirtualBox machine's preferences
+
+# 2 - Install VirtualBox additions (need to reinstall when X server is running)
+# $ vagrant ssh
+# $ cd tmp
+# $ mkdir drive && sudo mount -o loop,ro VBoxGuestAdditions_5.1.26.iso drive
+# $ cd drive && sudo ./VBoxLinuxAdditions.run
+
+# 3 - Configure colors of gnome-terminal
