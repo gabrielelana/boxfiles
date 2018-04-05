@@ -10,7 +10,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "ubuntu/ubuntu-17.04"
+  config.vm.box = "generic/ubuntu1710"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -43,6 +43,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   config.vm.synced_folder "~/Desktop", "/mnt/host-desktop"
+  config.vm.synced_folder ".", "/vagrant", owner: "vagrant"
 
   config.vm.hostname = "apollo"
 
@@ -78,10 +79,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     
     echo "Install basic packages..."
     sudo apt-get install -y \
-      build-essential git zsh ack-grep silversearcher-ag emacs25 \
+      build-essential autoconf git zsh silversearcher-ag emacs25 \
       vim-gtk unzip xorg unclutter autocutsel dunst i3 suckless-tools \
       x11-utils gnome-terminal libglib2.0-bin slim firefox gnome-themes-* \
       libreadline-dev dbus-x11 jq
+    
+    echo "Install erlang dependencies..."
+    sudo apt-get install -y \
+      libwxgtk3.0-dev libgl1-mesa-dev libglu1-mesa-dev libpng-dev \
+      libssl-dev libncurses5-dev unixodbc-dev xsltproc libxml2-dev fop
     
     echo "Install Chrome"
     if [ ! -f /etc/apt/sources.list.d/google.list ]; then
@@ -143,11 +149,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     bash $HOME/.asdf/plugins/nodejs/bin/import-release-team-keyring
     
     echo "Install things with asdf..."
-    asdf install mongodb 3.5.1 && asdf global mongodb 3.5.1
-    asdf install erlang 19.3 && asdf global erlang 19.3
-    asdf install elixir 1.4.5-otp-19 && asdf global elixir 1.4.5-otp-19
-    asdf install nodejs 6.11.1 && asdf global nodejs 6.11.1
-    asdf install postgres 9.6.3 && asdf global postgres 9.6.3
+    $HOME/.asdf/bin/asdf install mongodb 3.5.1 && $HOME/.asdf/bin/asdf global mongodb 3.5.1
+    $HOME/.asdf/bin/asdf install erlang 20.3 && $HOME/.asdf/bin/asdf global erlang 20.3
+    $HOME/.asdf/bin/asdf install elixir 1.6.4 && $HOME/.asdf/bin/asdf global elixir 1.6.4
+    $HOME/.asdf/bin/asdf install nodejs 8.11.1 && $HOME/.asdf/bin/asdf global nodejs 8.11.1
+    $HOME/.asdf/bin/asdf install postgres 9.6.8 && $HOME/.asdf/bin/asdf global postgres 9.6.8
     
     echo "Install rust..."
     curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y
