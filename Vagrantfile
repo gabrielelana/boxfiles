@@ -141,7 +141,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     $HOME/.asdf/bin/asdf plugin-add postgres https://github.com/smashedtoatoms/asdf-postgres.git
     $HOME/.asdf/bin/asdf plugin-add erlang https://github.com/asdf-vm/asdf-erlang.git
     $HOME/.asdf/bin/asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git
-    $HOME/.asdf/bin/asdf plugin-add haskell https://github.com/vic/asdf-haskell.git
     $HOME/.asdf/bin/asdf plugin-add ocaml https://github.com/vic/asdf-ocaml.git
     $HOME/.asdf/bin/asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby.git
     $HOME/.asdf/bin/asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git
@@ -157,6 +156,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     
     echo "Install rust..."
     curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y
+    
+    echo "Install haskell..."
+    curl -sSL https://get.haskellstack.org/ | sh
     
     # TODO: install Heroku command line + credentials
     # TODO: install Travis command line + credentials
