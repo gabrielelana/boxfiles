@@ -88,6 +88,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     sudo apt-get install -y \
       libwxgtk3.0-dev libgl1-mesa-dev libglu1-mesa-dev libpng-dev \
       libssl-dev libncurses5-dev unixodbc-dev xsltproc libxml2-dev fop
+      
+    echo "Install emacs dependencies..."
+    sudo apt-get install -y \
+      texinfo libgtk-3-dev libxpm-dev libgif-dev libgnutls-dev
     
     echo "Install Chrome"
     if [ ! -f /etc/apt/sources.list.d/google.list ]; then
