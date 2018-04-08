@@ -48,31 +48,34 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.hostname = "apollo"
 
   # Provider-specific configuration so you can fine-tune various
-  # backing providers for Vagrant. These expose provider-specific options.
-  # Example for VirtualBox:
-  config.vm.provider :virtualbox do |vb|
+  # backing providers for Vagrant. These expose provider-specific options.  
+  
+  # $ vagrant plugin install vagrant-vmware-desktop
+  # $ vagrant plugin license vagrant-vmware-desktop license.lic
+  # You need also to install the Vagrant VMware Utility (https://www.vagrantup.com/vmware/downloads.html)
+  config.vm.provider :vmware_desktop do |v|
     # Machine name
-    vb.name = "dream-002"
+    v.name = "dream-003"
 
-    # Boot with GUI or not
-    vb.gui = true
-
-    # Use VBoxManage to customize the VM
-    vb.customize ["modifyvm", :id, "--memory", "4096"]
-    vb.customize ["modifyvm", :id, "--cpus", "4"]
-    vb.customize ["modifyvm", :id, "--accelerate3d", vb.gui ? "on" : "off"]
-    vb.customize ["modifyvm", :id, "--clipboard", vb.gui ? "bidirectional" : "disabled"]
-    vb.customize ["modifyvm", :id, "--vram", vb.gui ? "256" : "12"]
-    vb.customize ["modifyvm", :id, "--acpi", "on"]
-    vb.customize ["modifyvm", :id, "--ioapic", "on"]
-    vb.customize ['guestproperty', 'set', :id,
-                  '/VirtualBox/GuestAdd/VBoxService/--timesync-interval', '500']
-    vb.customize ['guestproperty', 'set', :id,
-                  '/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold', '800']
+    # Boot with GUI
+    v.gui = true
+    
+    # VMWare Customization
+    v.vmx["numvcpus"] = "4"
+    v.vmx["memsize"] = "4096"
+    v.vmx["displayName"] = "dream-003"
+    v.vmx["guestOS"] = "ubuntu-64"
+    v.vmx["ethernet0.pcislotnumber"] = "32"
+    v.vmx["gui.fitGuestUsingNativeDisplayResolution"] = "TRUE"
+    v.vmx["gui.lastPoweredViewMode"] = "fullscreen"
+    v.vmx["gui.viewModeAtPowerOn"] = "fullscreen"
+    v.vmx["svga.graphicsMemoryKB"] = "2097152"
+    v.vmx["mks.enable3d"] = "TRUE"
+    v.vmx["tools.syncTime"] = "TRUE"
   end
    
   HEREDOC = "<<"
-    
+      
   config.vm.provision "shell", inline: <<-SHELL.gsub(/^ +/, '')
     echo "Update package repositories..."
     sudo apt-get update
@@ -107,7 +110,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
     
     echo "Create user coder..."
-    if ! id -u coder 2>&1 > /dev/null; then
+    if ! id -u coder 2>&1 >/dev/null; then
       sudo useradd --gid users --groups sudo --shell /bin/zsh --password RN6rj58jeFlVU coder
       sudo mkdir -p /home/coder/{etc,code,opt,tmp}
       sudo mkdir -p /home/coder/.ssh
@@ -131,7 +134,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       sudo chown -R coder:users /home/coder
     fi
     
-    sudo -iu coder
+    # TODO: for some reason here coder is not a valid user...
+    echo -n "Trying to become coder..."
+    sudo -iu coder /bin/bash 2>&1 >/dev/null
+    if ! [ "`whoami`" = "coder" ]; then sleep 2; echo -n "."; sudo -iu coder /bin/bash 2>&1 >/dev/null; fi
+    if ! [ "`whoami`" = "coder" ]; then sleep 2; echo -n "."; sudo -iu coder /bin/bash 2>&1 >/dev/null; fi
+    if ! [ "`whoami`" = "coder" ]; then sleep 2; echo -n "."; sudo -iu coder /bin/bash 2>&1 >/dev/null; fi
+    if ! [ "`whoami`" = "coder" ]; then sleep 2; echo -n "."; sudo -iu coder /bin/bash 2>&1 >/dev/null; fi
+    if ! [ "`whoami`" = "coder" ]; then echo " Unable to become coder, giving up ;-("; exit 1; fi
+      
     echo "Install dotfiles..."
     [ ! -d .dotfiles ] && git clone git@github.com:gabrielelana/dotfiles.git .dotfiles
     cd .dotfiles
@@ -141,23 +152,32 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     echo "Install asdf and related plugins..."
     git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.3.0
       
-    $HOME/.asdf/bin/asdf plugin-add mongodb https://github.com/sylph01/asdf-mongodb.git
-    $HOME/.asdf/bin/asdf plugin-add postgres https://github.com/smashedtoatoms/asdf-postgres.git
-    $HOME/.asdf/bin/asdf plugin-add erlang https://github.com/asdf-vm/asdf-erlang.git
-    $HOME/.asdf/bin/asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git
-    $HOME/.asdf/bin/asdf plugin-add ocaml https://github.com/vic/asdf-ocaml.git
-    $HOME/.asdf/bin/asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby.git
-    $HOME/.asdf/bin/asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git
-    $HOME/.asdf/bin/asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
-    bash $HOME/.asdf/plugins/nodejs/bin/import-release-team-keyring
+    $HOME/.asdf/bin/asdf plugin-add mongodb https://github.com/sylph01/asdf-mongodb.git 2>&1 >/dev/null
+    $HOME/.asdf/bin/asdf plugin-add postgres https://github.com/smashedtoatoms/asdf-postgres.git 2>&1 >/dev/null
+    $HOME/.asdf/bin/asdf plugin-add erlang https://github.com/asdf-vm/asdf-erlang.git 2>&1 >/dev/null
+    $HOME/.asdf/bin/asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git 2>&1 >/dev/null
+    $HOME/.asdf/bin/asdf plugin-add ocaml https://github.com/vic/asdf-ocaml.git 2>&1 >/dev/null
+    $HOME/.asdf/bin/asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby.git 2>&1 >/dev/null
+    $HOME/.asdf/bin/asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git 2>&1 >/dev/null
+    bash $HOME/.asdf/plugins/nodejs/bin/import-release-team-keyring 2>&1 >/dev/null
     
     echo "Install things with asdf..."
-    $HOME/.asdf/bin/asdf install mongodb 3.5.1 && $HOME/.asdf/bin/asdf global mongodb 3.5.1
-    $HOME/.asdf/bin/asdf install erlang 20.3 && $HOME/.asdf/bin/asdf global erlang 20.3
-    $HOME/.asdf/bin/asdf install elixir 1.6.4 && $HOME/.asdf/bin/asdf global elixir 1.6.4
-    $HOME/.asdf/bin/asdf install nodejs 8.11.1 && $HOME/.asdf/bin/asdf global nodejs 8.11.1
-    $HOME/.asdf/bin/asdf install postgres 9.6.8 && $HOME/.asdf/bin/asdf global postgres 9.6.8
-    
+    function asdf_install() {
+      echo -n "Installing $1 version $2... "
+      $HOME/.asdf/bin/asdf install $1 $2 >/dev/null 2>&1
+      if [ $? -eq 0 ]; then
+        $HOME/.asdf/bin/asdf global $1 $2
+        echo "done"
+      else
+        echo "failed ;-("
+      fi
+    }
+    asdf_install mongodb 3.5.1
+    asdf_install erlang 20.3
+    asdf_install elixir 1.6.4
+    asdf_install nodejs 8.11.1
+    asdf_install postgres 9.6.8
+
     echo "Install rust..."
     curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y
     
@@ -167,7 +187,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # TODO: install Heroku command line + credentials
     # TODO: install Travis command line + credentials
     # TODO: install AWS command line + credentials
-        
+    
     echo "Start Slim..."
     if sudo service slim status | grep inactive; then
       sudo service slim start
@@ -176,14 +196,4 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 end
 
 # After the first provisioning
-
-# 1 - Enable HiDPI Display in VirtualBox
-# "Display > Use Unscaled HiDPI Output" in VirtualBox machine's preferences
-
-# 2 - Install VirtualBox additions (need to reinstall when X server is running)
-# $ vagrant ssh
-# $ cd tmp
-# $ mkdir drive && sudo mount -o loop,ro VBoxGuestAdditions_5.1.26.iso drive
-# $ cd drive && sudo ./VBoxLinuxAdditions.run
-
-# 3 - Configure colors of gnome-terminal
+# TODO...
