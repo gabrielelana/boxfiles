@@ -10,7 +10,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "generic/ubuntu1710"
+  config.vm.box = "bento/ubuntu-18.04"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -55,7 +55,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # You need also to install the Vagrant VMware Utility (https://www.vagrantup.com/vmware/downloads.html)
   config.vm.provider :vmware_desktop do |v|
     # Machine name
-    v.name = "dream-003"
+    v.name = "dream-004"
 
     # Boot with GUI
     v.gui = true
@@ -63,9 +63,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # VMWare Customization
     v.vmx["numvcpus"] = "4"
     v.vmx["memsize"] = "4096"
-    v.vmx["displayName"] = "dream-003"
+    v.vmx["displayName"] = "dream-004"
     v.vmx["guestOS"] = "ubuntu-64"
-    v.vmx["ethernet0.pcislotnumber"] = "32"
+    # v.vmx["ethernet0.pcislotnumber"] = "32"
     v.vmx["gui.fitGuestUsingNativeDisplayResolution"] = "TRUE"
     v.vmx["gui.lastPoweredViewMode"] = "fullscreen"
     v.vmx["gui.viewModeAtPowerOn"] = "fullscreen"
@@ -73,125 +73,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.vmx["mks.enable3d"] = "TRUE"
     v.vmx["tools.syncTime"] = "TRUE"
   end
-   
-  HEREDOC = "<<"
-      
-  config.vm.provision "shell", inline: <<-SHELL.gsub(/^ +/, '')
-    echo "Update package repositories..."
-    sudo apt-get update
-    
-    echo "Install basic packages..."
-    sudo apt-get install -y \
-      build-essential autoconf git zsh silversearcher-ag emacs25 \
-      vim-gtk unzip xorg unclutter autocutsel dunst i3 suckless-tools \
-      x11-utils gnome-terminal libglib2.0-bin slim firefox gnome-themes-* \
-      libreadline-dev dbus-x11 jq
-    
-    echo "Install erlang dependencies..."
-    sudo apt-get install -y \
-      libwxgtk3.0-dev libgl1-mesa-dev libglu1-mesa-dev libpng-dev \
-      libssl-dev libncurses5-dev unixodbc-dev xsltproc libxml2-dev fop
-      
-    echo "Install emacs dependencies..."
-    sudo apt-get install -y \
-      texinfo libgtk-3-dev libxpm-dev libgif-dev libgnutls-dev
-    
-    echo "Install Chrome"
-    if [ ! -f /etc/apt/sources.list.d/google.list ]; then
-      wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-      echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list
-      sudo apt-get update
-      sudo apt-get install -y google-chrome-stable
-    fi
-    
-    echo "System configuration..."
-    sudo timedatectl set-timezone Europe/Rome
-    sudo update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
-    echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-    
-    echo "Create user coder..."
-    if ! id -u coder 2>&1 >/dev/null; then
-      sudo useradd --gid users --groups sudo --shell /bin/zsh --password RN6rj58jeFlVU coder
-      sudo mkdir -p /home/coder/{etc,code,opt,tmp}
-      sudo mkdir -p /home/coder/.ssh
-      if [ ! -f /vagrant/id_rsa.gabrielelana ]; then
-        echo "Missing ssh key files" 1>&2
-        exit 1
-      fi
-      sudo cp /vagrant/id_rsa.gabrielelana /home/coder/.ssh
-      sudo cp /vagrant/id_rsa.gabrielelana.pub /home/coder/.ssh
-      cat #{HEREDOC}EOF > /home/coder/.ssh/config
-        Host *
-        ServerAliveInterval 60
-        ConnectTimeout 1
-      
-        Host github.com
-        User git
-        IdentityFile ~/.ssh/id_rsa.gabrielelana
-        StrictHostKeyChecking no
-        HostName github.com
-      EOF
-      sudo chown -R coder:users /home/coder
-    fi
-    
-    # TODO: for some reason here coder is not a valid user...
-    echo -n "Trying to become coder..."
-    sudo -iu coder /bin/bash 2>&1 >/dev/null
-    if ! [ "`whoami`" = "coder" ]; then sleep 2; echo -n "."; sudo -iu coder /bin/bash 2>&1 >/dev/null; fi
-    if ! [ "`whoami`" = "coder" ]; then sleep 2; echo -n "."; sudo -iu coder /bin/bash 2>&1 >/dev/null; fi
-    if ! [ "`whoami`" = "coder" ]; then sleep 2; echo -n "."; sudo -iu coder /bin/bash 2>&1 >/dev/null; fi
-    if ! [ "`whoami`" = "coder" ]; then sleep 2; echo -n "."; sudo -iu coder /bin/bash 2>&1 >/dev/null; fi
-    if ! [ "`whoami`" = "coder" ]; then echo " Unable to become coder, giving up ;-("; exit 1; fi
-      
-    echo "Install dotfiles..."
-    [ ! -d .dotfiles ] && git clone git@github.com:gabrielelana/dotfiles.git .dotfiles
-    cd .dotfiles
-    zsh install-or-update.sh
-    sudo zsh configure-slim-theme.sh
-    
-    echo "Install asdf and related plugins..."
-    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.3.0
-      
-    $HOME/.asdf/bin/asdf plugin-add mongodb https://github.com/sylph01/asdf-mongodb.git 2>&1 >/dev/null
-    $HOME/.asdf/bin/asdf plugin-add postgres https://github.com/smashedtoatoms/asdf-postgres.git 2>&1 >/dev/null
-    $HOME/.asdf/bin/asdf plugin-add erlang https://github.com/asdf-vm/asdf-erlang.git 2>&1 >/dev/null
-    $HOME/.asdf/bin/asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git 2>&1 >/dev/null
-    $HOME/.asdf/bin/asdf plugin-add ocaml https://github.com/vic/asdf-ocaml.git 2>&1 >/dev/null
-    $HOME/.asdf/bin/asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby.git 2>&1 >/dev/null
-    $HOME/.asdf/bin/asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git 2>&1 >/dev/null
-    bash $HOME/.asdf/plugins/nodejs/bin/import-release-team-keyring 2>&1 >/dev/null
-    
-    echo "Install things with asdf..."
-    function asdf_install() {
-      echo -n "Installing $1 version $2... "
-      $HOME/.asdf/bin/asdf install $1 $2 >/dev/null 2>&1
-      if [ $? -eq 0 ]; then
-        $HOME/.asdf/bin/asdf global $1 $2
-        echo "done"
-      else
-        echo "failed ;-("
-      fi
-    }
-    asdf_install mongodb 3.5.1
-    asdf_install erlang 20.3
-    asdf_install elixir 1.6.4
-    asdf_install nodejs 8.11.1
-    asdf_install postgres 9.6.8
-
-    echo "Install rust..."
-    curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y
-    
-    echo "Install haskell..."
-    curl -sSL https://get.haskellstack.org/ | sh
-    
-    # TODO: install Heroku command line + credentials
-    # TODO: install Travis command line + credentials
-    # TODO: install AWS command line + credentials
-    
-    echo "Start Slim..."
-    if sudo service slim status | grep inactive; then
-      sudo service slim start
-    fi
+  
+  config.vm.provision :shell, path: "./system-setup.sh"
+  config.vm.provision :shell, inline: <<-SHELL.gsub(/^ +/, '')
+    sudo chmod +x /vagrant/coder-setup.sh
+    sudo -iu coder /bin/zsh -c "/vagrant/coder-setup.sh"
   SHELL
 end
 
