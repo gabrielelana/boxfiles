@@ -11,17 +11,17 @@ apt-get install -y \
   unzip xorg unclutter autocutsel dunst i3 suckless-tools \
   x11-utils gnome-terminal libglib2.0-bin slim firefox \
   gnome-themes-standard gnome-themes-extra gnome-themes-ubuntu \
-  libreadline-dev dbus-x11 jq 
+  libreadline-dev dbus-x11 jq
 
 echo "Install Erlang dependencies..."
 apt-get install -y \
   libwxgtk3.0-dev libgl1-mesa-dev libglu1-mesa-dev libpng-dev \
   libssl-dev libncurses5-dev unixodbc-dev xsltproc libxml2-dev fop
-  
+
 echo "Install Emacs..."
  add-apt-repository -y ppa:kelleyk/emacs
  apt-get install -y emacs26
-  
+
 echo "Install Chrome..."
 if [ ! -f /etc/apt/sources.list.d/google.list ]; then
   wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
@@ -29,6 +29,14 @@ if [ ! -f /etc/apt/sources.list.d/google.list ]; then
   apt-get update
   apt-get install -y google-chrome-stable
 fi
+
+echo "Install Utilities..."
+RELEASE="stable"
+wget --quiet "https://storage.googleapis.com/shellcheck/shellcheck-${RELEASE}.linux.x86_64.tar.xz"
+tar --xz -xvf shellcheck-"${RELEASE}".linux.x86_64.tar.xz
+cp shellcheck-"${RELEASE}"/shellcheck ~/bin/shellcheck
+rm -rf shellcheck-"${RELEASE}"
+rm -f shellcheck-"${RELEASE}".linux.x86_64.tar.xz
 
 echo "System configuration..."
 timedatectl set-timezone Europe/Rome
@@ -53,7 +61,7 @@ if ! id -u coder >/dev/null 2>&1; then
     Host *
     ServerAliveInterval 60
     ConnectTimeout 1
-  
+
     Host github.com
       User git
       IdentityFile ~/.ssh/id_rsa.gabrielelana
