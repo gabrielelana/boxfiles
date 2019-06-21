@@ -65,13 +65,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.vmx["memsize"] = "4096"
     v.vmx["displayName"] = "dream-004"
     v.vmx["guestOS"] = "ubuntu-64"
-    # v.vmx["ethernet0.pcislotnumber"] = "32"
+    v.vmx["ethernet0.pcislotnumber"] = "32"
     v.vmx["gui.fitGuestUsingNativeDisplayResolution"] = "TRUE"
     v.vmx["gui.lastPoweredViewMode"] = "fullscreen"
     v.vmx["gui.viewModeAtPowerOn"] = "fullscreen"
-    v.vmx["svga.graphicsMemoryKB"] = "2097152"
+    v.vmx["svga.graphicsMemoryKB"] = "262144" # 256MB
+    v.vmx["svga.vramSize"] = "268435456" # 256MB
     v.vmx["mks.enable3d"] = "TRUE"
     v.vmx["tools.syncTime"] = "TRUE"
+    v.vmx["suspend.disabled"] = "TRUE"
   end
   
   config.vm.provision :shell, path: "./system-setup.sh"
