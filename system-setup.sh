@@ -11,7 +11,8 @@ apt-get install -y \
   unzip xorg unclutter autocutsel dunst i3 suckless-tools \
   x11-utils gnome-terminal libglib2.0-bin slim firefox \
   gnome-themes-standard gnome-themes-extra gnome-themes-ubuntu \
-  libreadline-dev dbus-x11 jq entr iitalian aspell-it libxft-dev
+  libreadline-dev dbus-x11 jq entr iitalian aspell-it libxft-dev \
+  gnutls-bin
 
 echo "Install Erlang dependencies..."
 apt-get install -y \
