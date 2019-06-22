@@ -46,6 +46,14 @@ curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y
 echo "Install haskell..."
 curl -sSL https://get.haskellstack.org/ | sh
 
+echo "Install emacs things..."
+# cask
+curl -fsSkL https://raw.github.com/cask/cask/master/go | python
+# evm
+sudo mkdir /usr/local/evm
+sudo chown $USER: /usr/local/evm
+curl -fsSkL https://raw.github.com/rejeep/evm/master/go | bash
+
 # TODO: install Heroku command line + credentials
 # TODO: install Travis command line + credentials
 # TODO: install AWS command line + credentials
