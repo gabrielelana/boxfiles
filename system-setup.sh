@@ -32,11 +32,14 @@ fi
 
 echo "Install Utilities..."
 RELEASE="stable"
+# shellcheck
 wget --quiet "https://storage.googleapis.com/shellcheck/shellcheck-${RELEASE}.linux.x86_64.tar.xz"
 tar --xz -xvf shellcheck-"${RELEASE}".linux.x86_64.tar.xz
 cp shellcheck-"${RELEASE}"/shellcheck ~/bin/shellcheck
 rm -rf shellcheck-"${RELEASE}"
 rm -f shellcheck-"${RELEASE}".linux.x86_64.tar.xz
+# cask
+curl -fsSkL https://raw.github.com/cask/cask/master/go | python
 
 echo "System configuration..."
 timedatectl set-timezone Europe/Rome
