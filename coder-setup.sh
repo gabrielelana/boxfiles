@@ -39,6 +39,7 @@ asdf_install erlang 21.2.2
 asdf_install elixir 1.7.4-otp-21
 asdf_install nodejs 11.6.0
 asdf_install postgres 11.1
+asdf_install ruby 2.6.0
 
 echo "Install rust..."
 curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y
