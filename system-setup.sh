@@ -12,7 +12,7 @@ apt-get install -y \
   x11-utils gnome-terminal libglib2.0-bin slim firefox \
   gnome-themes-standard gnome-themes-extra gnome-themes-ubuntu \
   libreadline-dev dbus-x11 jq entr iitalian aspell-it libxft-dev \
-  gnutls-bin
+  gnutls-bin libxaw7-dev libtiff5-dev libgnutls28-dev
 
 echo "Install Erlang dependencies..."
 apt-get install -y \
