@@ -46,6 +46,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder ".", "/vagrant", owner: "vagrant"
 
   config.vm.hostname = "apollo"
+  config.vm.box = "dream-004"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.  
@@ -54,9 +55,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # $ vagrant plugin license vagrant-vmware-desktop license.lic
   # You need also to install the Vagrant VMware Utility (https://www.vagrantup.com/vmware/downloads.html)
   config.vm.provider :vmware_desktop do |v|
-    # Machine name
-    v.name = "dream-004"
-
     # Boot with GUI
     v.gui = true
     
